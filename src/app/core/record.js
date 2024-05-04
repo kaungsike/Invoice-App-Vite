@@ -1,3 +1,4 @@
+import Swal from "sweetalert2";
 import { updateTotalCost } from "./function.js";
 import { rowGroup, rowTemplate } from "./selectors.js"
 
@@ -16,10 +17,39 @@ export const createRecord = ({name,price,id},quantity) => {
 
 export const deleteRecord = (e) => {
     const row = e.target.closest(".row");
-    if(confirm("Are you sure to delete?")){
-        row.remove();
-        updateTotalCost()
-    }
+    // if(confirm("Are you sure to delete?")){
+    //     row.remove();
+    //     updateTotalCost()
+    // }
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        // confirmButtonColor: "#3085d6",
+        // cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+            row.remove();
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "bottom-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                }
+              });
+              Toast.fire({
+                icon: "success",
+                title: "Remove record successful!"
+              });
+        }
+      });
+
 }
 
 export const updateQuantity = (productId,p) => {
